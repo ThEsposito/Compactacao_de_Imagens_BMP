@@ -4,20 +4,19 @@
 
 void compactaBMP(int linhas_matriz, int colunas_pixel, unsigned char matriz_imagem_original[linhas_matriz][colunas_pixel*3],
     int lin_inicial, int lin_final, int col_inicial, int col_final,unsigned char R[],
-    unsigned char G[], unsigned char B[], int *indice_vetores){
+    unsigned char G[], unsigned char B[], int *indice_vetores){         // ESSA FUNCAO TA CERTA
         // Estamos utilizando a var de colunas em formato de pixels. Dessa forma, não vamos perder a noção de
         // cor e podemos só multiplicar o valor por 3 ao acessar a matriz.
         // Como a linha não tem esse parâmetro, acessamos diretamente.
-
     // CASO BASE:
-    int qtde_linhas_nessa_recursao = lin_final-lin_inicial + 1;
+    int qtde_linhas_nessa_recursao = lin_final - lin_inicial + 1;
     int qtde_col_nessa_recursao = col_final - col_inicial + 1;    
 
     if(qtde_linhas_nessa_recursao<=3 || qtde_col_nessa_recursao<=3){
         int centro_col = (col_final + col_inicial)/2;
         int centro_lin = (lin_final + lin_inicial)/2; 
         int col_centro_byte = centro_col*3;
-        
+
         R[*indice_vetores] = matriz_imagem_original[centro_lin][col_centro_byte];
         G[*indice_vetores] = matriz_imagem_original[centro_lin][col_centro_byte+1];
         B[*indice_vetores] = matriz_imagem_original[centro_lin][col_centro_byte+2];
@@ -56,11 +55,12 @@ void descompactaBMP(int linhas, int colunas_pixel, unsigned char matriz_reconstr
         int col_final_byte = col_final *3;
 
         for (int i = lin_inicial; i <= lin_final; i++) {
-            for (int j = col_inicial_byte; j <= col_final_byte; j+=3) {        // O problema tá aqui ó
-                // int j_byte = j * 3;
-                // matriz_reconstruida[i][j_byte] = R[*indice_vetores];
-                // matriz_reconstruida[i][j_byte + 1] = G[*indice_vetores];
-                // matriz_reconstruida[i][j_byte + 2] = B[*indice_vetores];
+            for (int j = col_inicial_byte; j <= col_final_byte; j++) {        // O problema tá aqui ó
+                int j_byte = j * 3;
+                printf("Descompactando indice: %d, Linha: %d, Coluna: %d\n", *indice_vetores, i, j_byte);
+                matriz_reconstruida[i][j_byte] = R[*indice_vetores];
+                matriz_reconstruida[i][j_byte + 1] = G[*indice_vetores];
+                matriz_reconstruida[i][j_byte + 2] = B[*indice_vetores];
             }
         }
         (*indice_vetores)++;
