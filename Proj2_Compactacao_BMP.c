@@ -51,13 +51,10 @@ void descompactaBMP(int linhas, int colunas_pixel, unsigned char matriz_reconstr
 
     // Caso base: preenche toda a região com o pixel atual dos vetores R, G, B
     if (qtde_linhas <= 3 || qtde_colunas <= 3) {
-        int col_inicial_byte = col_inicial*3;
-        int col_final_byte = col_final *3;
-
         for (int i = lin_inicial; i <= lin_final; i++) {
-            for (int j = col_inicial_byte; j <= col_final_byte; j++) {        // O problema tá aqui ó
+            for (int j = col_inicial; j <= col_final; j++) {        // O problema tá aqui ó
                 int j_byte = j * 3;
-                printf("Descompactando indice: %d, Linha: %d, Coluna: %d\n", *indice_vetores, i, j_byte);
+                printf("Descompactando indice: %d, Linha: %d, Coluna: %d\n", *indice_vetores, i, j);
                 matriz_reconstruida[i][j_byte] = R[*indice_vetores];
                 matriz_reconstruida[i][j_byte + 1] = G[*indice_vetores];
                 matriz_reconstruida[i][j_byte + 2] = B[*indice_vetores];
