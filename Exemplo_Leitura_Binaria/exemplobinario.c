@@ -1,8 +1,8 @@
 #include <stdio.h>
 
 int main() {
-  
-   
+	
+	
 	const char *FILENAME = "e:\\entrada.BMP"; 
 	const char *FILENAME_SAIDA = "e:\\saida.BMP";
     FILE *arquivo = fopen(FILENAME, "rb"); 
