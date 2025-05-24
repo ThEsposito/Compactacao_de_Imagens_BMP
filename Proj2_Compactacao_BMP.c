@@ -61,10 +61,6 @@ void descompactaBMP(int linhas, int colunas_pixel, unsigned char matriz_reconstr
                 // matriz_reconstruida[i][j_byte] = R[*indice_vetores];
                 // matriz_reconstruida[i][j_byte + 1] = G[*indice_vetores];
                 // matriz_reconstruida[i][j_byte + 2] = B[*indice_vetores];
-                matriz_reconstruida[i][j] = R[*indice_vetores];
-                matriz_reconstruida[i][j + 1] = G[*indice_vetores];
-                matriz_reconstruida[i][j + 2] = B[*indice_vetores];
-
             }
         }
         (*indice_vetores)++;
@@ -111,6 +107,7 @@ int main(){
     // Cada (1) bit em hex equivale a 4 bits em binário. Como temos 2 bits hex, precisamos deslocar 8 casas
     // à esquerda
 
+    printf("%02x %02x\n", cabecalho[11], cabecalho[10]);
     int offset = (cabecalho[11]<<8) + cabecalho[10]; // Também indica o tam do cabeçalho COMPLETO (incluindo o "extra", que é opcional)
     int tam_arquivo = (cabecalho[5]<<24) + (cabecalho[4]<<16) + (cabecalho[3]<<8) + cabecalho[2] ; // 0x86 0x05 --> 0x0586, tamanho correto do arquivo
 
@@ -198,6 +195,5 @@ int main(){
     }
 
     fclose(arquivo_descompactado);
-
     return 0;
 }
