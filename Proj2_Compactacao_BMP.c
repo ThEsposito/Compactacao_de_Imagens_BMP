@@ -1,10 +1,10 @@
 #include <stdio.h>
 
-#define TAM_MAX_VETORES 1000
+#define TAM_MAX_VETORES 100
 
-void compactaBMP(int linhas_matriz, int colunas_pixel, unsigned char matriz_imagem_original[linhas_matriz][colunas_pixel*3],
-    int lin_inicial, int lin_final, int col_inicial, int col_final,unsigned char R[],
-    unsigned char G[], unsigned char B[], int *indice_vetores){         // ESSA FUNCAO TA CERTA
+void compactaBMP(int linhas_matriz, int colunas_pixel, int zeros_por_linha, unsigned char matriz_imagem_original[linhas_matriz][(colunas_pixel*3)+zeros_por_linha],
+    int lin_inicial, int lin_final, int col_inicial, int col_final,unsigned char R[TAM_MAX_VETORES],
+    unsigned char G[TAM_MAX_VETORES], unsigned char B[TAM_MAX_VETORES], int *indice_vetores){         // ESSA FUNCAO TA CERTA
         // Estamos utilizando a var de colunas em formato de pixels. Dessa forma, não vamos perder a noção de
         // cor e podemos só multiplicar o valor por 3 ao acessar a matriz.
         // Como a linha não tem esse parâmetro, acessamos diretamente.
@@ -12,14 +12,14 @@ void compactaBMP(int linhas_matriz, int colunas_pixel, unsigned char matriz_imag
     int qtde_linhas_nessa_recursao = lin_final - lin_inicial + 1;
     int qtde_col_nessa_recursao = col_final - col_inicial + 1;    
 
-    if(qtde_linhas_nessa_recursao<=3 || qtde_col_nessa_recursao<=3){
-        int centro_col = (col_final + col_inicial)/2;
+    if(qtde_linhas_nessa_recursao<=3 || qtde_col_nessa_recursao<=3){        //MATRIZ CHAMANDO VALOR ERRADO!!!!!!!
+        int centro_col = (col_final + col_inicial)/2;                       // Msm com indices certos, o valor do centro
         int centro_lin = (lin_final + lin_inicial)/2; 
-        int col_centro_byte = centro_col*3;
-
-        R[*indice_vetores] = matriz_imagem_original[centro_lin][col_centro_byte];
-        G[*indice_vetores] = matriz_imagem_original[centro_lin][col_centro_byte+1];
-        B[*indice_vetores] = matriz_imagem_original[centro_lin][col_centro_byte+2];
+        int centro_col_byte = centro_col*3;
+        printf("Valor: %X %X %X\n", matriz_imagem_original[centro_lin][centro_col_byte], matriz_imagem_original[centro_lin][centro_col_byte+1], matriz_imagem_original[centro_lin][centro_col_byte+2]);
+        R[*indice_vetores] = matriz_imagem_original[centro_lin][centro_col_byte];
+        G[*indice_vetores] = matriz_imagem_original[centro_lin][centro_col_byte+1];
+        B[*indice_vetores] = matriz_imagem_original[centro_lin][centro_col_byte+2];
         (*indice_vetores)++;
 
         return;
@@ -31,19 +31,19 @@ void compactaBMP(int linhas_matriz, int colunas_pixel, unsigned char matriz_imag
 
     // PASSOS RECURSIVOS:
     // Quadrante superior esquerdo:
-    compactaBMP(linhas_matriz, colunas_pixel, matriz_imagem_original, lin_inicial, meio_lin, col_inicial, meio_col, R, G, B, indice_vetores);
+    compactaBMP(linhas_matriz, colunas_pixel,zeros_por_linha, matriz_imagem_original, lin_inicial, meio_lin, col_inicial, meio_col, R, G, B, indice_vetores);
     
     // Quadrante superior direito:
-    compactaBMP(linhas_matriz, colunas_pixel, matriz_imagem_original, lin_inicial, meio_lin, meio_col+1, col_final, R, G, B, indice_vetores);
+    compactaBMP(linhas_matriz, colunas_pixel,zeros_por_linha, matriz_imagem_original, lin_inicial, meio_lin, meio_col+1, col_final, R, G, B, indice_vetores);
 
     // Quadrante inferior esquerdo:
-    compactaBMP(linhas_matriz, colunas_pixel, matriz_imagem_original, meio_lin+1, lin_final, col_inicial, meio_col, R, G, B, indice_vetores);
+    compactaBMP(linhas_matriz, colunas_pixel,zeros_por_linha, matriz_imagem_original, meio_lin+1, lin_final, col_inicial, meio_col, R, G, B, indice_vetores);
 
     // Quadrante inferior direito:
-    compactaBMP(linhas_matriz, colunas_pixel, matriz_imagem_original, meio_lin+1, lin_final, meio_col+1, col_final, R, G, B, indice_vetores);
+    compactaBMP(linhas_matriz, colunas_pixel,zeros_por_linha, matriz_imagem_original, meio_lin+1, lin_final, meio_col+1, col_final, R, G, B, indice_vetores);
 }
 
-void descompactaBMP(int linhas, int colunas_pixel, unsigned char matriz_reconstruida[linhas][colunas_pixel*3],
+void descompactaBMP(int linhas, int colunas_pixel, int zeros_por_linha, unsigned char matriz_reconstruida[linhas][colunas_pixel*3+zeros_por_linha],
                     int lin_inicial, int lin_final, int col_inicial, int col_final,
                     unsigned char R[], unsigned char G[], unsigned char B[], int *indice_vetores) {
     int qtde_linhas = lin_final - lin_inicial + 1;
@@ -52,12 +52,11 @@ void descompactaBMP(int linhas, int colunas_pixel, unsigned char matriz_reconstr
     // Caso base: preenche toda a região com o pixel atual dos vetores R, G, B
     if (qtde_linhas <= 3 || qtde_colunas <= 3) {
         for (int i = lin_inicial; i <= lin_final; i++) {
-            for (int j = col_inicial; j <= col_final; j++) {        // O problema tá aqui ó
-                int j_byte = j * 3;
-                printf("Descompactando indice: %d, Linha: %d, Coluna: %d\n", *indice_vetores, i, j);
-                matriz_reconstruida[i][j_byte] = R[*indice_vetores];
-                matriz_reconstruida[i][j_byte + 1] = G[*indice_vetores];
-                matriz_reconstruida[i][j_byte + 2] = B[*indice_vetores];
+            for (int j = col_inicial; j <= col_final; j++) {
+                int col_byte = j * 3;
+                matriz_reconstruida[i][col_byte] = R[*indice_vetores];
+                matriz_reconstruida[i][col_byte + 1] = G[*indice_vetores];
+                matriz_reconstruida[i][col_byte + 2] = B[*indice_vetores];
             }
         }
         (*indice_vetores)++;
@@ -68,10 +67,10 @@ void descompactaBMP(int linhas, int colunas_pixel, unsigned char matriz_reconstr
     int meio_lin = (lin_final + lin_inicial) / 2;
     int meio_col = (col_final + col_inicial) / 2;
 
-    descompactaBMP(linhas, colunas_pixel, matriz_reconstruida, lin_inicial, meio_lin, col_inicial, meio_col, R, G, B, indice_vetores);
-    descompactaBMP(linhas, colunas_pixel, matriz_reconstruida, lin_inicial, meio_lin, meio_col + 1, col_final, R, G, B, indice_vetores);
-    descompactaBMP(linhas, colunas_pixel, matriz_reconstruida, meio_lin + 1, lin_final, col_inicial, meio_col, R, G, B, indice_vetores);
-    descompactaBMP(linhas, colunas_pixel, matriz_reconstruida, meio_lin + 1, lin_final, meio_col + 1, col_final, R, G, B, indice_vetores);
+    descompactaBMP(linhas, colunas_pixel,zeros_por_linha, matriz_reconstruida, lin_inicial, meio_lin, col_inicial, meio_col, R, G, B, indice_vetores);
+    descompactaBMP(linhas, colunas_pixel,zeros_por_linha, matriz_reconstruida, lin_inicial, meio_lin, meio_col + 1, col_final, R, G, B, indice_vetores);
+    descompactaBMP(linhas, colunas_pixel,zeros_por_linha, matriz_reconstruida, meio_lin + 1, lin_final, col_inicial, meio_col, R, G, B, indice_vetores);
+    descompactaBMP(linhas, colunas_pixel, zeros_por_linha,matriz_reconstruida, meio_lin + 1, lin_final, meio_col + 1, col_final, R, G, B, indice_vetores);
 }
 
 void leituraArquivo(); // Vou implementar uma função só pra ler os arquivos, evitando repetições 
@@ -103,8 +102,7 @@ int main(){
     // 8 bits foram deslocados, porque é necessário deslocar 2 bits à esquerda em hexa. 
     // Cada (1) bit em hex equivale a 4 bits em binário. Como temos 2 bits hex, precisamos deslocar 8 casas
     // à esquerda
-
-    printf("%02x %02x\n", cabecalho[11], cabecalho[10]);
+    // Exemplo: 0x86 0x05 --> 0x0586
     int offset = (cabecalho[11]<<8) + cabecalho[10]; // Também indica o tam do cabeçalho COMPLETO (incluindo o "extra", que é opcional)
     int tam_arquivo = (cabecalho[5]<<24) + (cabecalho[4]<<16) + (cabecalho[3]<<8) + cabecalho[2] ; // 0x86 0x05 --> 0x0586, tamanho correto do arquivo
 
@@ -134,27 +132,33 @@ int main(){
     int colunas = colunas_pixels*3;
     int zeros_por_linha = (4-(colunas%4))%4; // Garantir que a qtde de bytes das colunas seja mult de 4
 
+
     unsigned char matriz_imagem_original[linhas][colunas+zeros_por_linha];
     unsigned char zero_hex = 0x0;
     for(int i=0; i<linhas; i++){
-        for(int j=0; j<colunas; j++){ 
+        for(int j=0; j<colunas+zeros_por_linha; j++){   
             fread(&byte, 1, 1, arquivo_entrada);
             matriz_imagem_original[i][j] = byte;
-        }
-        for(int k=0; k<zeros_por_linha; k++){
-            matriz_imagem_original[i][colunas+k]=zero_hex;
         }
     }
 
     fclose(arquivo_entrada);
 
+    // Printando a matriz:
+    printf("\nMatriz da Imagem Original:\n");
+    for(int i=0; i<linhas; i++){
+        for(int j=0; j<colunas+zeros_por_linha; j++){
+            printf("%03X ", matriz_imagem_original[i][j]);
+        }
+        printf("\n\n");
+    }
 
     // COMPACTAÇÃO DA IMAGEM
     int indice_vetores=0;
     unsigned char R[TAM_MAX_VETORES];
     unsigned char G[TAM_MAX_VETORES];
     unsigned char B[TAM_MAX_VETORES];
-    compactaBMP(linhas, colunas_pixels, matriz_imagem_original, 0, linhas-1, 0, colunas_pixels-1, R, G, B, &indice_vetores);
+    compactaBMP(linhas, colunas_pixels,zeros_por_linha, matriz_imagem_original, 0, linhas-1, 0, colunas_pixels-1, R, G, B, &indice_vetores);
     
     FILE *arquivo_compactado = fopen(FILENAME_COMPACTADA, "wb");
     // Gravação da Imagem Compactada
@@ -173,9 +177,9 @@ int main(){
 	
     unsigned char matriz_reconstruida[linhas][colunas + zeros_por_linha];
     indice_vetores = 0;
-    descompactaBMP(linhas, colunas_pixels, matriz_reconstruida, 0, linhas - 1, 0, colunas_pixels - 1, R, G, B, &indice_vetores);
+    descompactaBMP(linhas, colunas_pixels,zeros_por_linha, matriz_reconstruida, 0, linhas - 1, 0, colunas_pixels - 1, R, G, B, &indice_vetores);
     
-    for(int i=0; i<offset; i++){        // Cabeçalho
+    for(int i=0; i<offset; i++){        //  TEM QUE LER DO ARQUIVO COMPACTADO. MODULARIZAR E COLOCAR OPÇÕES DE ESCOLHA
         fwrite(&cabecalho_completo[i], 1, 1, arquivo_descompactado);
     }
 
