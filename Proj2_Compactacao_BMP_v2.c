@@ -192,7 +192,7 @@ long int retornaTamanhoArquivo(const char *nomeArquivo){
     FILE *arquivo = fopen(nomeArquivo, "rb");
     if(arquivo==NULL){
         printf("Erro ao abrir o arquivo\n");
-        return;
+        return -1;
     }
     fseek(arquivo, 0, SEEK_END);
     long int tamArquivo = ftell(arquivo);
@@ -216,10 +216,10 @@ int main() {
 
         switch(opcao) {
             case 1:
-                compactarImagem(&FILENAME, &FILENAME_COMPACTADA);
+                compactarImagem(FILENAME, FILENAME_COMPACTADA);
                 break;
             case 2:
-                descompactarImagem(&FILENAME_COMPACTADA, &FILENAME_DESCOMPACTADA);
+                descompactarImagem(FILENAME_COMPACTADA, FILENAME_DESCOMPACTADA);
                 break;
             case 3:
                 printf("Até mais!\n");
@@ -229,20 +229,20 @@ int main() {
         }
     } while(opcao != 3); //roda até o usuario desejar sair
 
-    // CALCULAR TAMANHO DOS 3 ARQUIVOS E PRINTAR TUDO
+    // Vai dar problema se o arquivo não tiver sido compactado ou descompactado antes
     long int tamArquivoOriginal = retornaTamanhoArquivo(FILENAME);
-    long int tamArquivoCompactado = retornaTamanhoArquivo(FILENAME_COMPACTADA);
+    long int tamArquivoCompactado = retornaTamanhoArquivo(FILENAME_COMPACTADA); 
     long int tamArquivoDescompactado = retornaTamanhoArquivo(FILENAME_DESCOMPACTADA);
     
-    printf("Tamanho da imagem Original: %ld bytes\n", tamArquivoOriginal);
+    printf("\nTamanho da imagem Original: %ld bytes\n", tamArquivoOriginal);
     printf("Tamanho da imagem Compactada: %ld bytes\n", tamArquivoCompactado);
     printf("Tamanho da imagem Remontada: %ld bytes\n", tamArquivoDescompactado);
 
     int porcentagemCompactacao = (int)(((float)(tamArquivoOriginal - tamArquivoCompactado) / tamArquivoOriginal) * 100);
     printf("Porcentagem de compactação: %d%%\n", porcentagemCompactacao);
     printf("\nIntegrantes do grupo:\n");
-    printf("    Theo Espósito Simões Resende    RA: 10721356\n");
-    printf("    Kauê Lima Rodrigues Meneses     RA: 10410594\n");
+    printf("   - Theo Espósito Simões Resende    RA: 10721356\n");
+    printf("   - Kauê Lima Rodrigues Meneses     RA: 10410594\n");
 
     return 0;
 }
