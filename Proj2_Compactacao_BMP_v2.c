@@ -238,7 +238,8 @@ int main() {
     printf("Tamanho da imagem Compactada: %ld bytes\n", tamArquivoCompactado);
     printf("Tamanho da imagem Remontada: %ld bytes\n", tamArquivoDescompactado);
 
-    int porcentagemCompactacao = (int)(((float)(tamArquivoOriginal - tamArquivoCompactado) / tamArquivoOriginal) * 100);;
+    int porcentagemCompactacao = (int)(((float)(tamArquivoOriginal - tamArquivoCompactado) / tamArquivoOriginal) * 100);
+    printf("Porcentagem de compactação: %d%%\n", porcentagemCompactacao);
     printf("\nIntegrantes do grupo:\n");
     printf("    Theo Espósito Simões Resende    RA: 10721356\n");
     printf("    Kauê Lima Rodrigues Meneses     RA: 10410594\n");
