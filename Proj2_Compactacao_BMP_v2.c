@@ -157,7 +157,7 @@ void descompactarImagem(const char *FILENAME_COMPACTADA, const char *FILENAME_DE
     unsigned char G[TAM_MAX_VETORES];
     unsigned char B[TAM_MAX_VETORES];
 
-    fseek(arquivo_compactado, offset, SEEK_SET);                //***Que porra é essa???????
+    fseek(arquivo_compactado, offset, SEEK_SET);     
     while(fread(&byte, 1, 1, arquivo_compactado)) {
         R[indice_vetores] = byte;
         fread(&G[indice_vetores], 1, 1, arquivo_compactado);
